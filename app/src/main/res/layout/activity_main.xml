@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+   <TextView
+       android:id="@+id/titulo_pagina"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginStart="20dp"
+       android:layout_marginLeft="20dp"
+       android:layout_marginTop="36dp"
+       android:text="TRAVERL DIARY"
+       android:textColor="#3BB06A"
+       android:textStyle="bold"
+       android:textSize="30sp"
+       tools:ignore="MissingConstraints" />
+
+   <ImageView
+       android:layout_width="100dp"
+       android:layout_height="100dp"
+       android:id="@+id/imagen_perfil"
+       android:layout_toEndOf="@id/titulo_pagina"
+       android:layout_marginTop="10dp"
+       android:layout_marginStart="40dp"
+       android:layout_marginLeft="400dp"
+       android:src="@drawable/perfil"
+       tools:ignore="MissingConstraints" />
+
+   <View
+       android:id="@+id/primerLinea"
+       android:layout_width="match_parent"
+       android:layout_height="5dp"
+       android:layout_marginTop="20dp"
+       android:layout_below="@id/imagen_perfil"
+       android:background="#E2DEDE" />
+
+   <Button
+       android:id="@+id/boton_albums"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@id/primerLinea"
+       android:layout_marginLeft="20dp"
+       android:layout_marginTop="19dp"
+       android:backgroundTint="#3BB06A"
+       android:text="Tus Albums"
+       app:cornerRadius="20dp" />
+
+   <Button
+       android:id="@+id/boton_ajustes"
+       android:layout_width="80dp"
+       android:layout_height="86dp"
+       android:layout_below="@id/primerLinea"
+       android:layout_toRightOf="@id/boton_albums"
+       android:layout_marginTop="10dp"
+       android:layout_marginLeft="160dp"
+       android:drawableBottom="@drawable/settings"
+       android:backgroundTint="#0000"
+      />
+
+   <View
+       android:id="@+id/segundaLinea"
+       android:layout_width="match_parent"
+       android:layout_height="5dp"
+       android:layout_marginTop="20dp"
+       android:layout_below="@id/boton_albums"
+       android:background="#E2DEDE" />
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/recyclerView_cardsViajes"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@id/segundaLinea"
+       android:layout_marginTop="20dp"
+       android:layout_alignParentStart="true"
+       android:layout_alignParentEnd="true"
+   />
+
+</RelativeLayout>
+   <Button
+       android:id="@+id/boton_inferior"
+       android:layout_width="0dp"
+       android:layout_height="55dp"
+       android:background="#3BB06A"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintBottom_toBottomOf="parent"
+       android:drawableBottom="@drawable/addicon"
+      />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
