@@ -17,7 +17,7 @@
        android:layout_marginStart="20dp"
        android:layout_marginLeft="20dp"
        android:layout_marginTop="36dp"
-       android:text="TRAVERL DIARY"
+       android:text="TRAVEL DIARY"
        android:textColor="#3BB06A"
        android:textStyle="bold"
        android:textSize="30sp"

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageButton
+        android:id="@+id/boton_volver"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/volver"
+    android:background="?android:attr/selectableItemBackground"
+    android:contentDescription="Volver"
+    android:scaleType="fitCenter" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Título del álbum"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/nombre_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Introduce el título del álbum" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descripción del álbum"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/descripcion_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Introduce la descripción del álbum" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Planificación"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/boton_agregar_planificacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textSize="24sp"
+            android:textColor="#000000"
+            android:background="@android:color/holo_blue_bright" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#90EE90"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/contenedor_planificacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+    </LinearLayout>
+</ScrollView>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Álbum de fotos"
+        android:textSize="24sp" />
+
+        <ImageButton
+            android:id="@+id/boton_agregar_fotos"
+            android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/camara"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="Agregar fotos"
+        android:scaleType="fitCenter" />
+
+    </LinearLayout>
+
+    <!--<GridView
+    android:id="@+id/gridView_album_fotos"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="8dp"
+    android:horizontalSpacing="8dp"
+    android:columnWidth="100dp"
+    android:visibility="visible">
+
+    </GridView>
+    -->
+</LinearLayout>

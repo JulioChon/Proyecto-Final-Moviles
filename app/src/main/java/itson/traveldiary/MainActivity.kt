@@ -1,7 +1,9 @@
 package itson.traveldiary
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -19,11 +21,18 @@ class MainActivity : AppCompatActivity() {
         )
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView_cardsViajes)
-
-        val adapter  = CustomadapterCardViajes(listaViajes)
-
+        val adapter = CustomadapterCardViajes(listaViajes)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+
+
+        val addButton = findViewById<Button>(R.id.boton_inferior)
+        addButton.setOnClickListener {
+            val intent = Intent(this, CreateAlbumActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
+
+
