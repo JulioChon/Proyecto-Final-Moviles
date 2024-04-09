@@ -10,9 +10,10 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/volver"
-    android:background="?android:attr/selectableItemBackground"
-    android:contentDescription="Volver"
-    android:scaleType="fitCenter" />
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="Volver"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +37,8 @@
         android:id="@+id/descripcion_album"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Introduce la descripción del álbum" />
+        android:hint="Introduce la descripción del álbum"
+        android:layout_marginBottom="10dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -102,16 +104,31 @@
 
     </LinearLayout>
 
-    <!--<GridView
-    android:id="@+id/gridView_album_fotos"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:numColumns="auto_fit"
-    android:verticalSpacing="8dp"
-    android:horizontalSpacing="8dp"
-    android:columnWidth="100dp"
-    android:visibility="visible">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#90EE90"
+        android:fillViewport="true">
 
-    </GridView>
-    -->
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/contenedor_fotos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+
+            <GridView
+                android:id="@+id/gridView_album_fotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnWidth="100dp"
+                android:horizontalSpacing="8dp"
+                android:numColumns="auto_fit"
+                android:verticalSpacing="8dp"
+                android:visibility="visible">
+
+            </GridView>
+        </LinearLayout>
+    </ScrollView>
+        </LinearLayout>
