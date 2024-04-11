@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Recycler
+import itson.traveldiary.data.Viaje
 
 class CustomadapterCardViajes(private val viajes: List<Viaje>) : RecyclerView.Adapter<CustomadapterCardViajes.ViewHolder>() {
 

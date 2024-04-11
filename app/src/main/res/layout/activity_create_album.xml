@@ -67,40 +67,40 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="#90EE90"
-    android:fillViewport="true">
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/contenedor_planificacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
-        android:id="@+id/contenedor_planificacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:padding="8dp">
 
-    </LinearLayout>
-</ScrollView>
-
-    <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:padding="8dp">
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Álbum de fotos"
-        android:textSize="24sp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Álbum de fotos"
+            android:textSize="24sp" />
 
         <ImageButton
             android:id="@+id/boton_agregar_fotos"
             android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/camara"
-        android:background="?attr/selectableItemBackground"
-        android:contentDescription="Agregar fotos"
-        android:scaleType="fitCenter" />
+            android:layout_height="48dp"
+            android:src="@drawable/camara"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Agregar fotos"
+            android:scaleType="fitCenter" />
 
     </LinearLayout>
 
@@ -131,4 +131,20 @@
             </GridView>
         </LinearLayout>
     </ScrollView>
-        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/boton_guardar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Guardar"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+</LinearLayout>
+

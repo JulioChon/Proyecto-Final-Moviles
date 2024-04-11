@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -47,6 +48,11 @@ dependencies {
     //implementation ("androidx.core:core-ktx:1.12.0")
     //implementation("androidx.fragment:fragment-*:1.6.2")
     testImplementation("junit:junit:4.13.2")
+
+
+    val roomVersion = "2.6.0"
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

@@ -16,12 +16,25 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import itson.traveldiary.data.BaseDatos
+import itson.traveldiary.data.Planificacion
+import itson.traveldiary.data.PlanificacionDao
+import itson.traveldiary.data.Viaje
+import itson.traveldiary.data.ViajeDao
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class CreateAlbumActivity : AppCompatActivity() {
 
     private lateinit var planificationContainer: LinearLayout
-
+    private lateinit var nombreAlbum: EditText
+    private lateinit var descripcionAlbum: EditText
+    private lateinit var planificationList: MutableList<String>
+    private lateinit var viajeDao: ViajeDao
+    private lateinit var planificacionDao: PlanificacionDao
     companion object {
         const val PERMISSION_REQUEST_CODE = 1001
         const val REQUEST_CODE_GALLERY = 1002
@@ -31,7 +44,18 @@ class CreateAlbumActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_album)
 
+        val database = BaseDatos.getInstance(applicationContext)
+        viajeDao = database.viajeDao
+        planificacionDao = database.planificacionDao
+
+        nombreAlbum = findViewById(R.id.nombre_album)
+        descripcionAlbum = findViewById(R.id.descripcion_album)
         planificationContainer = findViewById(R.id.contenedor_planificacion)
+        val botonGuardar =  findViewById<Button>(R.id.boton_guardar)
+
+        botonGuardar.setOnClickListener{
+            guardarViaje()
+        }
 
         val botonVolver = findViewById<ImageButton>(R.id.boton_volver)
         botonVolver.setOnClickListener {
@@ -47,6 +71,38 @@ class CreateAlbumActivity : AppCompatActivity() {
         val botonAgregarFotos = findViewById<ImageButton>(R.id.boton_agregar_fotos)
         botonAgregarFotos.setOnClickListener {
             checkGalleryPermissionAndOpen()
+        }
+    }
+
+    private fun guardarViaje() {
+        val titulo = nombreAlbum.text.toString()
+        val descripcion = descripcionAlbum.text.toString()
+
+        val viaje = Viaje(titulo, R.drawable.ic_launcher_foreground, descripcion)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val viajeId = viajeDao.insert(viaje)
+
+            if (viajeId != -1L) {
+
+                guardarPlanificaciones(viajeId)
+            } else {
+
+            }
+        }
+    }
+
+    private suspend fun guardarPlanificaciones(viajeId: Long) {
+        for (i in 0 until planificationContainer.childCount) {
+            val editText = planificationContainer.getChildAt(i) as EditText
+            val texto = editText.text.toString()
+            val planificacion = Planificacion(evento = texto, viajeId = viajeId.toInt())
+
+
+            val planificacionId = planificacionDao.insert(planificacion)
+            if(planificacionId!=-1L){
+                finish()
+            }
         }
     }
     private fun addEditText() {
@@ -115,5 +171,7 @@ class CreateAlbumActivity : AppCompatActivity() {
         contenedorFotos.addView(imageView)
     }
 }
+
+
 
 
