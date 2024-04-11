@@ -2,19 +2,16 @@ package itson.traveldiary
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.GridView
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import itson.traveldiary.data.BaseDatos
 import itson.traveldiary.data.Planificacion
@@ -23,7 +20,6 @@ import itson.traveldiary.data.Viaje
 import itson.traveldiary.data.ViajeDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -128,11 +124,6 @@ class CreateAlbumActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_CODE_GALLERY)
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -142,7 +133,7 @@ class CreateAlbumActivity : AppCompatActivity() {
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openGallery()
+                    checkGalleryPermissionAndOpen()
                 } else {
                     // msj error o algo asi
                 }
@@ -160,17 +151,24 @@ class CreateAlbumActivity : AppCompatActivity() {
     }
 
     private fun agregarImagenAlGridView(imageUri: Uri?) {
-        val imageView = ImageView(this).apply {
-            setImageURI(imageUri)
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+        val gridView = findViewById<GridView>(R.id.gridView_album_fotos)
+
+        val adapter = gridView.adapter as? ImageAdapter
+
+        if (adapter == null) {
+            val listaImagenes = mutableListOf<Uri?>()
+            listaImagenes.add(imageUri)
+            val nuevoAdapter = ImageAdapter(this, listaImagenes)
+            gridView.adapter = nuevoAdapter
+        } else {
+            adapter.imageUris.add(imageUri)
+            adapter.notifyDataSetChanged()
         }
-        val contenedorFotos = findViewById<LinearLayout>(R.id.contenedor_fotos)
-        contenedorFotos.addView(imageView)
     }
+
 }
+
+
 
 
 

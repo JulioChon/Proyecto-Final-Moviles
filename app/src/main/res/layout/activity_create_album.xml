@@ -83,6 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         android:gravity="center_vertical"
         android:padding="8dp">
 
@@ -104,33 +105,26 @@
 
     </LinearLayout>
 
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/contenedor_fotos"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:background="#90EE90"
-        android:fillViewport="true">
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <LinearLayout
-            android:id="@+id/contenedor_fotos"
+        <GridView
+            android:id="@+id/gridView_album_fotos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:columnWidth="100dp"
+            android:horizontalSpacing="8dp"
+            android:numColumns="auto_fit"
+            android:verticalSpacing="8dp"
+            android:visibility="visible">
+        </GridView>
 
-
-            <GridView
-                android:id="@+id/gridView_album_fotos"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnWidth="100dp"
-                android:horizontalSpacing="8dp"
-                android:numColumns="auto_fit"
-                android:verticalSpacing="8dp"
-                android:visibility="visible">
-
-            </GridView>
-        </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
