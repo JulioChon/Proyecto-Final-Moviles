@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
 data class Planificacion (
 
     val evento: String,
-    val viajeId: Int,
+    val viajeId: Int?,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 )

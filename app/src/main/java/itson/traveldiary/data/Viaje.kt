@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class Viaje(
     val title: String,
     val image: Int,
+    val ubicacion: String,
     val detail: String,
 
     @PrimaryKey(autoGenerate = true)

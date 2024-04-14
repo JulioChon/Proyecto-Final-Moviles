@@ -8,12 +8,26 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import itson.traveldiary.data.Viaje
 
-class CustomadapterCardViajes(private val viajes: List<Viaje>) : RecyclerView.Adapter<CustomadapterCardViajes.ViewHolder>() {
+class CustomadapterCardViajes(
+    private val viajes: List<Viaje>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<CustomadapterCardViajes.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var itemImage: ImageView = itemView.findViewById(R.id.imagen_viaje)
         var itemTitle: TextView = itemView.findViewById(R.id.titulo_viaje)
         var itemDetail: TextView = itemView.findViewById(R.id.detalle_viaje)
+
+        init {
+
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val viaje = viajes[position]
+                    listener.onItemClick(viaje)
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,5 +45,10 @@ class CustomadapterCardViajes(private val viajes: List<Viaje>) : RecyclerView.Ad
 
     override fun getItemCount(): Int {
         return viajes.size
+    }
+
+
+    interface OnItemClickListener {
+        fun onItemClick(viaje: Viaje)
     }
 }

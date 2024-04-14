@@ -5,15 +5,36 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <ImageButton
-        android:id="@+id/boton_volver"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/volver"
-        android:background="?android:attr/selectableItemBackground"
-        android:contentDescription="Volver"
-        android:scaleType="fitCenter"
-        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <ImageButton
+            android:id="@+id/boton_volver"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/volver"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="Volver"
+            android:scaleType="fitCenter"
+            android:layout_marginBottom="1dp"/>
+        <ImageView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/location"
+            android:layout_marginStart="10dp"
+            android:contentDescription="Ubicación" />
+        <TextView
+            android:id="@+id/campo_ubicacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="aqui va la ubicación"
+            android:textSize="18sp" />
+    </LinearLayout>
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -137,6 +158,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Guardar"
+            android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/boton_eliminar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Eliminar"
             android:layout_marginTop="16dp" />
     </LinearLayout>
 
