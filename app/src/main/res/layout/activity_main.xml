@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 <RelativeLayout
     android:layout_width="match_parent"
@@ -54,16 +55,15 @@
        app:cornerRadius="20dp" />
 
    <Button
-       android:id="@+id/boton_ajustes"
+       android:id="@+id/boton_random"
        android:layout_width="80dp"
        android:layout_height="86dp"
        android:layout_below="@id/primerLinea"
+       android:layout_marginLeft="159dp"
+       android:layout_marginTop="11dp"
        android:layout_toRightOf="@id/boton_albums"
-       android:layout_marginTop="10dp"
-       android:layout_marginLeft="160dp"
-       android:drawableBottom="@drawable/settings"
        android:backgroundTint="#0000"
-      />
+       android:drawableBottom="@mipmap/ic_launcher" />
 
    <View
        android:id="@+id/segundaLinea"

@@ -16,14 +16,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.Manifest
+import android.content.Context
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viajeDao: ViajeDao
     private val REQUEST_CODE_LOCATION_PERMISSION = 123
-
+    private lateinit var randomBotom: Button
+    private lateinit var imagen_perfil: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -32,15 +35,45 @@ class MainActivity : AppCompatActivity() {
         val database = BaseDatos.getInstance(applicationContext)
         viajeDao = database.viajeDao
 
+        imagen_perfil = findViewById<ImageView>(R.id.imagen_perfil)
+        randomBotom = findViewById<Button>(R.id.boton_random)
         val addButton = findViewById<Button>(R.id.boton_inferior)
+        cargarImagenPerfilDesdeSharedPreferences(this)
         addButton.setOnClickListener {
             val intent = Intent(this, CreateAlbumActivity::class.java)
             startActivity(intent)
         }
 
+        randomBotom.setOnClickListener{
+            actualizarImagenPerfil()
+        }
+
         checkLocationPermission()
     }
 
+    fun actualizarImagenPerfil() {
+        val imagenes = arrayOf("luna", "saturno", "sol", "tierra")
+        val random = (0 until imagenes.size).random()
+        val nombreImagen = imagenes[random]
+        val resourceId = resources.getIdentifier(nombreImagen, "drawable", packageName)
+        imagen_perfil.setImageResource(resourceId)
+        guardarImagenEnSharedPreferences(this, nombreImagen)
+    }
+
+    fun guardarImagenEnSharedPreferences(context: Context, nombreImagen: String) {
+        val sharedPreferences = context.getSharedPreferences("configuracion", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("imagen_perfil", nombreImagen)
+        editor.apply()
+    }
+    fun cargarImagenPerfilDesdeSharedPreferences(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("configuracion", Context.MODE_PRIVATE)
+        val nombreImagen = sharedPreferences.getString("imagen_perfil", null)
+        if (nombreImagen != null) {
+            val resourceId = context.resources.getIdentifier(nombreImagen, "drawable", context.packageName)
+            imagen_perfil.setImageResource(resourceId)
+        }
+    }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
