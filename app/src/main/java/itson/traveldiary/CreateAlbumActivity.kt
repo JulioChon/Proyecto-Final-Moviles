@@ -26,11 +26,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.Manifest
+import android.app.AlertDialog
 import android.location.Geocoder
 import android.os.Environment
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -223,86 +227,112 @@ class CreateAlbumActivity : AppCompatActivity() {
         val descripcion = descripcionAlbum.text.toString()
         val ubicacion = campoUbicacion.text.toString()
 
+        if (titulo.isBlank() || descripcion.isBlank()) {
 
-       if(!id.isNotEmpty())    {
-         val viaje = Viaje(titulo, R.drawable.ic_launcher_foreground,ubicacion ,descripcion)
+            Toast.makeText(this, "Debe llenar los campos de título y descripción", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-         CoroutineScope(Dispatchers.IO).launch {
-            val viajeId = viajeDao.insert(viaje)
+        if (id.isNotEmpty()) {
 
-            if (viajeId != -1L) {
-            guardarPlanificaciones(viajeId)
+            actualizar()
             finish()
-            } else {
+        } else {
 
-        }
-        }
-       }else{
-           println("Entro a actualizar")
-           actualizar()
-           finish()
-       }
+            val viaje = Viaje(titulo, R.drawable.ic_launcher_foreground, ubicacion, descripcion)
+            CoroutineScope(Dispatchers.IO).launch {
+                val viajeId = viajeDao.insert(viaje)
+                if (viajeId != -1L) {
+                    guardarPlanificaciones(viajeId) {
 
+                        finish()
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@CreateAlbumActivity, "Error al guardar el viaje", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
     }
+
+
+
 
     private fun actualizar() {
-        val titulo = nombreAlbum.text.toString()
-        val descripcion = descripcionAlbum.text.toString()
-        val ubicacion = campoUbicacion.text.toString()
+        val titulo = nombreAlbum.text.toString().trim()
+        val descripcion = descripcionAlbum.text.toString().trim()
+        val ubicacion = campoUbicacion.text.toString().trim()
 
-        val viaje = Viaje(
-            id = id.toInt(),
-            title = titulo,
-            image = R.drawable.ic_launcher_foreground,
-            ubicacion = ubicacion,
-            detail = descripcion
-        )
+        val viaje = Viaje(id = id.toInt(), title = titulo, image = R.drawable.ic_launcher_foreground, ubicacion = ubicacion, detail = descripcion)
         CoroutineScope(Dispatchers.IO).launch {
             viajeDao.actualizarViaje(viaje)
-            guardarPlanificaciones(id.toLong())
-
-
-
+            guardarPlanificaciones(id.toLong()) {
+                runOnUiThread {
+                    Toast.makeText(this@CreateAlbumActivity, "Viaje actualizado correctamente", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            }
         }
     }
 
 
-    private suspend fun guardarPlanificaciones(viajeId: Long) {
+
+    private suspend fun guardarPlanificaciones(viajeId: Long, completion: () -> Unit) {
+        var planificacionGuardada = false
         for (i in 0 until planificationContainer.childCount) {
-
-                val editText = planificationContainer.getChildAt(i) as EditText
-                val texto = editText.text.toString()
-                val planificacionId = editText.id
-                if(planificacionId==0){
-                    val planificacion = Planificacion(evento = texto, viajeId = viajeId.toInt())
-
-                    planificacionDao.insert(planificacion)
-                }else{
-                    val planificacion = Planificacion(id = planificacionId,evento = texto, viajeId = viajeId.toInt())
-
-                    planificacionDao.actualizarPlanificacion(planificacion)
-                }
-
+            val editText = planificationContainer.getChildAt(i) as EditText
+            val texto = editText.text.toString().trim()
+            if (texto.isNotEmpty()) {
+                val planificacion = Planificacion(evento = texto, viajeId = viajeId.toInt())
+                planificacionDao.insert(planificacion)
+                planificacionGuardada = true
             }
-
+        }
+        if (planificacionGuardada) {
+            withContext(Dispatchers.Main) {
+                completion()
+            }
+        } else {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@CreateAlbumActivity, "No hay planificaciones para guardar.", Toast.LENGTH_SHORT).show()
+                completion()
+            }
+        }
     }
 
-    private fun addEditText() {
+
+
+
+    private fun addEditText(planificacion: Planificacion? = null) {
         val editText = EditText(this).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                topMargin = resources.getDimensionPixelSize(R.dimen.default_margin)
-            }
+            )
             hint = "Descripción de la actividad"
+            setText(planificacion?.evento)
             background = ContextCompat.getDrawable(context, R.drawable.edittext_background)
             setTextColor(Color.BLACK)
-            setId(0)
+            setOnLongClickListener {
+                confirmDeletion(it as EditText)
+                true
+            }
         }
         planificationContainer.addView(editText)
-
     }
+
+    private fun confirmDeletion(editText: EditText) {
+        AlertDialog.Builder(this)
+            .setTitle("Confirmar eliminación")
+            .setMessage("¿Estás seguro de que deseas eliminar esta entrada?")
+            .setPositiveButton("Eliminar") { dialog, which ->
+                planificationContainer.removeView(editText)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
 
     private fun checkGalleryPermissionAndOpen() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -345,7 +375,7 @@ class CreateAlbumActivity : AppCompatActivity() {
             ".jpg", /* suffix */
             storageDir /* directory */
         ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
+
             currentPhotoPath = absolutePath
         }
     }
@@ -368,7 +398,7 @@ class CreateAlbumActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openCamera()
                 } else {
-                    // Permission Denied
+                    
                 }
             }
         }

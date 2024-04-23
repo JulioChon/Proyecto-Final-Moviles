@@ -10,72 +10,77 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Barra de navegación con botón de regreso y ubicación -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
+
             <ImageButton
                 android:id="@+id/boton_volver"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/volver"
                 android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="Volver"
-                android:scaleType="fitCenter"
-                android:layout_marginBottom="1dp"/>
+                android:contentDescription="volver"
+                android:scaleType="fitCenter" />
+
             <ImageView
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/location"
-                android:layout_marginStart="10dp"
-                android:contentDescription="Ubicación" />
+                android:contentDescription="ubicacion" />
+
             <TextView
                 android:id="@+id/campo_ubicacion"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="aqui va la ubicación"
+                android:layout_weight="1"
+                android:text="ubicacion actual"
                 android:textSize="18sp" />
         </LinearLayout>
 
+        <!-- Título y descripción del álbum -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Título del álbum"
-            android:textSize="18sp"
-            android:layout_marginTop="12dp"/>
+            android:text="titulo album"
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/nombre_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Introduce el título del álbum" />
+            android:hint="introduce el titulo" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Descripción del álbum"
+            android:text="descripcion album"
             android:textSize="18sp" />
 
         <EditText
             android:id="@+id/descripcion_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Introduce la descripción del álbum"
-            android:layout_marginBottom="10dp"/>
+            android:hint=" introduce la descripcion" />
 
+        <!-- Botón de agregación de planificación -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Planificación"
+                android:text="planificacion"
                 android:textSize="24sp" />
+
             <Button
                 android:id="@+id/boton_agregar_planificacion"
                 android:layout_width="wrap_content"
@@ -84,24 +89,25 @@
                 android:textSize="24sp"
                 android:textColor="#000000"
                 android:background="@android:color/holo_blue_bright" />
-
-
         </LinearLayout>
 
+        <!-- Contenedor de planificación -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="#90EE90"
-            android:fillViewport="true">
+            android:background="#90EE90">
+
             <LinearLayout
                 android:id="@+id/contenedor_planificacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
+                <!-- Contenedor para elementos de planificación -->
             </LinearLayout>
         </ScrollView>
 
+        <!-- Sección de álbum de fotos y botones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,14 +116,12 @@
             android:padding="8dp"
             android:weightSum="3">
 
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="Álbum de fotos"
+                android:text="album fotos"
                 android:textSize="24sp" />
-
 
             <ImageButton
                 android:id="@+id/boton_agregar_fotos"
@@ -126,9 +130,8 @@
                 android:layout_weight="0.5"
                 android:src="@drawable/galeria"
                 android:background="?attr/selectableItemBackground"
-                android:contentDescription="Agregar fotos"
+                android:contentDescription="agregar fotos"
                 android:scaleType="fitCenter" />
-
 
             <ImageButton
                 android:id="@+id/boton_camara"
@@ -137,10 +140,11 @@
                 android:layout_weight="0.5"
                 android:src="@drawable/camara"
                 android:background="?attr/selectableItemBackground"
-                android:contentDescription="Abrir cámara"
+                android:contentDescription="abrir_camara"
                 android:scaleType="fitCenter" />
         </LinearLayout>
 
+        <!-- Contenedor de fotos del álbum -->
         <LinearLayout
             android:id="@+id/contenedor_fotos"
             android:layout_width="match_parent"
@@ -148,6 +152,7 @@
             android:background="#90EE90"
             android:orientation="vertical"
             android:padding="8dp">
+
             <GridView
                 android:id="@+id/gridView_album_fotos"
                 android:layout_width="match_parent"
@@ -160,24 +165,26 @@
             </GridView>
         </LinearLayout>
 
+        <!-- Botones de guardar y eliminar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp">
+
             <Button
                 android:id="@+id/boton_guardar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Guardar"
+                android:layout_height="wrap_content"
+                android:text="guardar"
                 android:layout_marginTop="16dp" />
+
             <Button
                 android:id="@+id/boton_eliminar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Eliminar"
+                android:layout_height="wrap_content"
+                android:text="eliminar"
                 android:layout_marginTop="16dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
-
