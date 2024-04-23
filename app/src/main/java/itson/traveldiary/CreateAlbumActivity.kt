@@ -27,8 +27,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.Manifest
 import android.location.Geocoder
+import android.os.Environment
 import android.view.View
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 
@@ -47,11 +53,18 @@ class CreateAlbumActivity : AppCompatActivity() {
     private lateinit var descripcion: String
     private lateinit var ubicacion: String
     private lateinit var id: String
+    private lateinit var photoFile: File
+    private lateinit var photoUri: Uri
 
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1001
         const val REQUEST_CODE_GALLERY = 1002
+        const val REQUEST_CODE_CAMERA = 1003
+        const val REQUEST_IMAGE_CAPTURE = 1004
+        var currentPhotoPath: String = ""
+        const val FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider"
+        const val PERMISSION_REQUEST_CODE_CAMERA = 1005
     }
 
     @SuppressLint("MissingInflatedId", "WrongViewCast")
@@ -76,7 +89,7 @@ class CreateAlbumActivity : AppCompatActivity() {
 
 
 
-         botonGuardar = findViewById<Button>(R.id.boton_guardar)
+        botonGuardar = findViewById<Button>(R.id.boton_guardar)
         botonGuardar.setOnClickListener {
             guardarViaje()
         }
@@ -96,6 +109,11 @@ class CreateAlbumActivity : AppCompatActivity() {
             checkGalleryPermissionAndOpen()
         }
 
+        val botonCamara = findViewById<ImageButton>(R.id.boton_camara)
+        botonCamara.setOnClickListener {
+            checkCameraPermissionAndOpen()
+        }
+
          botonEliminar = findViewById<Button>(R.id.boton_eliminar)
         botonEliminar.setOnClickListener{
             eliminarViaje()
@@ -106,7 +124,6 @@ class CreateAlbumActivity : AppCompatActivity() {
 
     private fun comprobarAccion(){
         if(titulo.isNotEmpty()){
-
             nombreAlbum.setText(titulo)
             descripcionAlbum.setText(descripcion)
             campoUbicacion.text = ubicacion
@@ -266,9 +283,7 @@ class CreateAlbumActivity : AppCompatActivity() {
                     planificacionDao.actualizarPlanificacion(planificacion)
                 }
 
-
             }
-
 
     }
 
@@ -297,6 +312,44 @@ class CreateAlbumActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
+    private fun checkCameraPermissionAndOpen() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                PERMISSION_REQUEST_CODE_CAMERA
+            )
+        } else {
+            openCamera()
+        }
+    }
+
+    private fun openCamera() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -311,20 +364,35 @@ class CreateAlbumActivity : AppCompatActivity() {
                     campoUbicacion.text = "Ubicación: Permiso denegado"
                 }
             }
+            REQUEST_CODE_CAMERA -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCamera()
+                } else {
+                    // Permission Denied
+                }
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null) {
-            val imageUri = data.data
-            agregarImagenAlGridView(imageUri)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CODE_GALLERY -> {
+                    if (data != null) {
+                        val imageUri = data.data
+                        agregarImagenAlGridView(imageUri)
+                    }
+                }
+                REQUEST_CODE_CAMERA -> {
+                    agregarImagenAlGridView(photoUri)
+                }
+            }
         }
     }
 
     private fun agregarImagenAlGridView(imageUri: Uri?) {
         val gridView = findViewById<GridView>(R.id.gridView_album_fotos)
-
         val adapter = gridView.adapter as? ImageAdapter
 
         if (adapter == null) {
