@@ -34,6 +34,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
@@ -59,7 +61,8 @@ class CreateAlbumActivity : AppCompatActivity() {
     private lateinit var id: String
     private lateinit var photoFile: File
     private lateinit var photoUri: Uri
-
+    private lateinit var photoAdapter: PhotoAdapter
+    private lateinit var recyclerView: RecyclerView
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1001
@@ -90,6 +93,13 @@ class CreateAlbumActivity : AppCompatActivity() {
         descripcionAlbum = findViewById(R.id.descripcion_album)
         planificationContainer = findViewById(R.id.contenedor_planificacion)
         campoUbicacion = findViewById(R.id.campo_ubicacion)
+
+
+        recyclerView = findViewById(R.id.recyclerView_album_fotos)
+        recyclerView.layoutManager = GridLayoutManager(this, 3) // por ejemplo, para 3 columnas
+        photoAdapter = PhotoAdapter(this, mutableListOf())
+        recyclerView.adapter = photoAdapter
+
 
 
 
@@ -427,7 +437,7 @@ class CreateAlbumActivity : AppCompatActivity() {
             when (requestCode) {
                 REQUEST_CODE_GALLERY -> {
                     data?.data?.let {
-                        agregarImagenAlGridView(it)
+                        agregarImagenAlRecyclerView(it)
                         Toast.makeText(this, "Imagen agregada desde la galería.", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -435,24 +445,15 @@ class CreateAlbumActivity : AppCompatActivity() {
                     // Confirmación de foto tomada
                     Toast.makeText(this, "Foto tomada.", Toast.LENGTH_SHORT).show()
                     // Agregar al GridView
-                    agregarImagenAlGridView(photoUri)
+                    agregarImagenAlRecyclerView(photoUri)
                     Toast.makeText(this, "Foto agregada al álbum.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
-    private fun agregarImagenAlGridView(imageUri: Uri?) {
-        val gridView = findViewById<GridView>(R.id.gridView_album_fotos)
-        val adapter = gridView.adapter as? ImageAdapter
-        if (adapter == null) {
-            val listaImagenes = mutableListOf<Uri?>()
-            listaImagenes.add(imageUri)
-            val nuevoAdapter = ImageAdapter(this, listaImagenes)
-            gridView.adapter = nuevoAdapter
-        } else {
-            adapter.imageUris.add(imageUri)
-            adapter.notifyDataSetChanged()
-        }
+    private fun agregarImagenAlRecyclerView(imageUri: Uri) {
+        photoAdapter.addImage(imageUri)
+        photoAdapter.notifyDataSetChanged()
     }
 }
 
