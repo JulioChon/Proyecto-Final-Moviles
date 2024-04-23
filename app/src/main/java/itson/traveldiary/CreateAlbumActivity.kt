@@ -360,11 +360,28 @@ class CreateAlbumActivity : AppCompatActivity() {
 
     private fun openCamera() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(packageManager)?.also {
+
+            photoFile = try {
+                createImageFile()
+            } catch (ex: IOException) {
+
+                Log.e("CreateAlbumActivity", "Error creating file: ${ex.localizedMessage}")
+                return
+            }
+
+            // Proceed only if the file was successfully created
+            photoFile?.also {
+                photoUri = FileProvider.getUriForFile(
+                    this,
+                    FILE_PROVIDER_AUTHORITY,
+                    it
+                )
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
             }
         }
     }
+
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
@@ -406,25 +423,27 @@ class CreateAlbumActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_CODE_GALLERY -> {
-                    if (data != null) {
-                        val imageUri = data.data
-                        agregarImagenAlGridView(imageUri)
+                    data?.data?.let {
+                        agregarImagenAlGridView(it)
+                        Toast.makeText(this, "Imagen agregada desde la galería.", Toast.LENGTH_SHORT).show()
                     }
                 }
-                REQUEST_CODE_CAMERA -> {
+                REQUEST_IMAGE_CAPTURE -> {
+                    // Confirmación de foto tomada
+                    Toast.makeText(this, "Foto tomada.", Toast.LENGTH_SHORT).show()
+                    // Agregar al GridView
                     agregarImagenAlGridView(photoUri)
+                    Toast.makeText(this, "Foto agregada al álbum.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
-
     private fun agregarImagenAlGridView(imageUri: Uri?) {
         val gridView = findViewById<GridView>(R.id.gridView_album_fotos)
         val adapter = gridView.adapter as? ImageAdapter
-
         if (adapter == null) {
             val listaImagenes = mutableListOf<Uri?>()
             listaImagenes.add(imageUri)
@@ -435,7 +454,6 @@ class CreateAlbumActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
     }
-
 }
 
 
