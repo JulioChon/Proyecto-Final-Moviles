@@ -12,6 +12,7 @@ abstract class BaseDatos : RoomDatabase() {
     abstract val viajeDao: ViajeDao
     abstract val planificacionDao: PlanificacionDao
 
+    abstract val imagenesDao:ImagenesDAO
     companion object {
         private var INSTANCE: BaseDatos? = null
 

@@ -13,6 +13,6 @@ interface ImagenesDAO {
     @Query("SELECT * FROM Imagenes WHERE viajeId = :id")
     fun obtenerImagenesPorId(id: Int): List<Imagenes>
 
-    @Delete
+    @Query("DELETE FROM Imagenes WHERE viajeId = :id")
     fun eliminarImagen(id: Int)
 }

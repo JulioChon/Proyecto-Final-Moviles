@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE_LOCATION_PERMISSION = 123
     private lateinit var randomBotom: Button
     private lateinit var imagen_perfil: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         randomBotom.setOnClickListener{
             actualizarImagenPerfil()
         }
+
 
         checkLocationPermission()
     }

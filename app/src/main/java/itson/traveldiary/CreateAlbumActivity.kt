@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
-import android.widget.GridView
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -36,12 +35,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import itson.traveldiary.data.Imagenes
+import itson.traveldiary.data.ImagenesDAO
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.collections.MutableList
 
 
 class CreateAlbumActivity : AppCompatActivity() {
@@ -63,6 +65,10 @@ class CreateAlbumActivity : AppCompatActivity() {
     private lateinit var photoUri: Uri
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var recyclerView: RecyclerView
+    private val selectedImageUris: MutableList<String> = mutableListOf()
+    private lateinit var imagenesDAO: ImagenesDAO
+
+
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1001
@@ -85,9 +91,11 @@ class CreateAlbumActivity : AppCompatActivity() {
 
 
 
+
         val database = BaseDatos.getInstance(applicationContext)
         viajeDao = database.viajeDao
         planificacionDao = database.planificacionDao
+        imagenesDAO = database.imagenesDao
 
         nombreAlbum = findViewById(R.id.nombre_album)
         descripcionAlbum = findViewById(R.id.descripcion_album)
@@ -142,6 +150,7 @@ class CreateAlbumActivity : AppCompatActivity() {
             descripcionAlbum.setText(descripcion)
             campoUbicacion.text = ubicacion
             cargarPlanificacion(id.toInt())
+            cargarImagenes(id.toInt())
             botonGuardar.setText("Actualizar")
         }else{
 
@@ -150,6 +159,16 @@ class CreateAlbumActivity : AppCompatActivity() {
             obtenerUbicacion()
         }
 
+    }
+
+    private fun cargarImagenes(viajeId: Int){
+        CoroutineScope(Dispatchers.IO).launch {
+            val listaImagenes = imagenesDAO.obtenerImagenesPorId(viajeId)
+            for (imagen in listaImagenes) {
+                val imageUri = Uri.parse(imagen.direccion)
+                agregarImagenAlRecyclerView(imageUri)
+            }
+        }
     }
     private fun eliminarViaje(){
         CoroutineScope(Dispatchers.IO).launch {
@@ -253,8 +272,8 @@ class CreateAlbumActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val viajeId = viajeDao.insert(viaje)
                 if (viajeId != -1L) {
+                    guardarImagenes(viajeId)
                     guardarPlanificaciones(viajeId) {
-
                         finish()
                     }
                 } else {
@@ -263,6 +282,13 @@ class CreateAlbumActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun guardarImagenes(viajeId: Long){
+        for (imageUri in selectedImageUris) {
+            val imagen = Imagenes(viajeId.toInt(), imageUri)
+            imagenesDAO.insert(imagen)
         }
     }
 
@@ -425,11 +451,12 @@ class CreateAlbumActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openCamera()
                 } else {
-                    
+
                 }
             }
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -453,6 +480,7 @@ class CreateAlbumActivity : AppCompatActivity() {
     }
     private fun agregarImagenAlRecyclerView(imageUri: Uri) {
         photoAdapter.addImage(imageUri)
+        selectedImageUris.add(imageUri.toString())
         photoAdapter.notifyDataSetChanged()
     }
 }
