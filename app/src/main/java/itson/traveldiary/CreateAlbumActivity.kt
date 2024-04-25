@@ -26,7 +26,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.Manifest
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.location.Geocoder
+import android.media.MediaScannerConnection
 import android.os.Environment
 import android.util.Log
 import android.view.View
@@ -387,7 +389,7 @@ class CreateAlbumActivity : AppCompatActivity() {
                     CoroutineScope(Dispatchers.IO).launch {
 
                         planificacionDao.eliminarPlanificacion(editText.getId())
-                        
+
                     }
                     planificationContainer.removeView(editText)
                 }
@@ -423,52 +425,70 @@ class CreateAlbumActivity : AppCompatActivity() {
     }
 
     private fun openCamera() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            // Los permisos están otorgados, puedes abrir la cámara aquí
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                photoFile = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    Log.e("MainActivity", "Error creating file: ${ex.localizedMessage}")
+                    return
+                }
 
-            photoFile = try {
-                createImageFile()
-            } catch (ex: IOException) {
-
-                Log.e("CreateAlbumActivity", "Error creating file: ${ex.localizedMessage}")
-                return
+                photoFile?.also {
+                    photoUri = FileProvider.getUriForFile(
+                        this,
+                        FILE_PROVIDER_AUTHORITY,
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
             }
+        } else {
 
-            // Proceed only if the file was successfully created
-            photoFile?.also {
-                photoUri = FileProvider.getUriForFile(
-                    this,
-                    FILE_PROVIDER_AUTHORITY,
-                    it
-                )
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }
         }
     }
+
 
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
-        ).apply {
-
-            currentPhotoPath = absolutePath
-        }
-        val rutaImagen = createImageFile().absolutePath
-        agregarImagenAGaleria(rutaImagen)
+        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: File(Environment.getExternalStorageDirectory(), "Pictures")
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
-    private fun agregarImagenAGaleria(rutaImagen: String) {
-        val archivoImagen = File(rutaImagen)
-        val uriImagen = Uri.fromFile(archivoImagen)
+    private fun saveImageToGallery() {
+        if (photoFile != null) {
+            val contentResolver = applicationContext.contentResolver
+            val imageUri = FileProvider.getUriForFile(
+                this,
+                FILE_PROVIDER_AUTHORITY,
+                photoFile!!
+            )
 
-        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-        mediaScanIntent.data = uriImagen
-        applicationContext.sendBroadcast(mediaScanIntent)
+
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.TITLE, "Título de la imagen")
+                put(MediaStore.Images.Media.DESCRIPTION, "Descripción de la imagen")
+                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+            }
+
+
+            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)?.let { uri ->
+                contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    contentResolver.openInputStream(imageUri)?.use { inputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+            }
+
+            
+            MediaScannerConnection.scanFile(this, arrayOf(photoFile!!.absolutePath), null, null)
+        } else {
+            Log.e("MainActivity", "Error: photoFile es null al intentar guardar la imagen en la galería.")
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -512,6 +532,7 @@ class CreateAlbumActivity : AppCompatActivity() {
                     // Agregar al GridView
                     agregarImagenAlRecyclerView(photoUri)
                     Toast.makeText(this, "Foto agregada al álbum.", Toast.LENGTH_SHORT).show()
+                    saveImageToGallery()
                 }
             }
         }
