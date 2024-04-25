@@ -16,6 +16,9 @@ interface PlanificacionDao {
     @Query("DELETE FROM Planificacion WHERE viajeId = :id")
     fun eliminarPlanificacionesPorId(id: Int)
 
+    @Query("DELETE FROM Planificacion WHERE id = :id")
+    fun eliminarPlanificacion(id: Int)
+
     @Update
     fun actualizarPlanificacion(planificacion: Planificacion)
 }

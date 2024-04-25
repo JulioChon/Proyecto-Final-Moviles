@@ -49,6 +49,7 @@ dependencies {
     //implementation ("androidx.core:core-ktx:1.12.0")
     //implementation("androidx.fragment:fragment-*:1.6.2")
     testImplementation("junit:junit:4.13.2")
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
 
 
     val roomVersion = "2.6.0"

@@ -30,6 +30,7 @@ import android.location.Geocoder
 import android.os.Environment
 import android.util.Log
 import android.view.View
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
@@ -46,6 +47,7 @@ import java.util.Locale
 import kotlin.collections.MutableList
 
 
+@Suppress("UNREACHABLE_CODE")
 class CreateAlbumActivity : AppCompatActivity() {
 
     private lateinit var planificationContainer: LinearLayout
@@ -67,6 +69,7 @@ class CreateAlbumActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private val selectedImageUris: MutableList<String> = mutableListOf()
     private lateinit var imagenesDAO: ImagenesDAO
+
 
 
 
@@ -111,6 +114,7 @@ class CreateAlbumActivity : AppCompatActivity() {
 
 
 
+
         botonGuardar = findViewById<Button>(R.id.boton_guardar)
         botonGuardar.setOnClickListener {
             guardarViaje()
@@ -149,7 +153,10 @@ class CreateAlbumActivity : AppCompatActivity() {
             nombreAlbum.setText(titulo)
             descripcionAlbum.setText(descripcion)
             campoUbicacion.text = ubicacion
-            cargarPlanificacion(id.toInt())
+            CoroutineScope(Dispatchers.IO).launch {
+                cargarPlanificacion(planificacionDao.obtenerPlanificacionesPorId(id.toInt()))
+            }
+
             cargarImagenes(id.toInt())
             botonGuardar.setText("Actualizar")
         }else{
@@ -178,13 +185,11 @@ class CreateAlbumActivity : AppCompatActivity() {
         }
     }
 
-    private fun cargarPlanificacion(id: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val obtenerPlanificacion = planificacionDao.obtenerPlanificacionesPorId(id)
-            runOnUiThread {
-                planificationContainer.removeAllViews()
+    private fun cargarPlanificacion(obtenerPlanificacion: List<Planificacion>) {
+
+
                 obtenerPlanificacion.forEach { planificacion ->
-                    val editText = EditText(this@CreateAlbumActivity).apply {
+                    val editText = EditText(this).apply {
                         layoutParams = LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -192,15 +197,19 @@ class CreateAlbumActivity : AppCompatActivity() {
                             topMargin = resources.getDimensionPixelSize(R.dimen.default_margin)
                         }
                         setId(planificacion.id)
+                        println(getId())
                         setText(planificacion.evento)
-                        background = ContextCompat.getDrawable(context, R.drawable.edittext_background)
+                        background =
+                            ContextCompat.getDrawable(context, R.drawable.edittext_background)
                         setTextColor(Color.BLACK)
+                        setOnLongClickListener {
+                            confirmDeletion(it as EditText)
+                            true
+                        }
                     }
                     planificationContainer.addView(editText)
-
                 }
-            }
-        }
+
     }
 
 
@@ -319,10 +328,18 @@ class CreateAlbumActivity : AppCompatActivity() {
         for (i in 0 until planificationContainer.childCount) {
             val editText = planificationContainer.getChildAt(i) as EditText
             val texto = editText.text.toString().trim()
+            val planificacionId = editText.id
             if (texto.isNotEmpty()) {
-                val planificacion = Planificacion(evento = texto, viajeId = viajeId.toInt())
-                planificacionDao.insert(planificacion)
-                planificacionGuardada = true
+                if(planificacionId==0){
+                    val planificacion = Planificacion(evento = texto, viajeId = viajeId.toInt())
+                    planificacionDao.insert(planificacion)
+                    planificacionGuardada = true
+                }else{
+                    val planificacion = Planificacion(id = planificacionId,evento = texto, viajeId = viajeId.toInt())
+
+                    planificacionDao.actualizarPlanificacion(planificacion)
+                }
+
             }
         }
         if (planificacionGuardada) {
@@ -350,6 +367,7 @@ class CreateAlbumActivity : AppCompatActivity() {
             setText(planificacion?.evento)
             background = ContextCompat.getDrawable(context, R.drawable.edittext_background)
             setTextColor(Color.BLACK)
+            setId(0)
             setOnLongClickListener {
                 confirmDeletion(it as EditText)
                 true
@@ -363,7 +381,17 @@ class CreateAlbumActivity : AppCompatActivity() {
             .setTitle("Confirmar eliminación")
             .setMessage("¿Estás seguro de que deseas eliminar esta entrada?")
             .setPositiveButton("Eliminar") { dialog, which ->
-                planificationContainer.removeView(editText)
+                if(editText.getId()==0){
+                    planificationContainer.removeView(editText)
+                }else{
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        planificacionDao.eliminarPlanificacion(editText.getId())
+                        
+                    }
+                    planificationContainer.removeView(editText)
+                }
+
             }
             .setNegativeButton("Cancelar", null)
             .show()
@@ -431,6 +459,16 @@ class CreateAlbumActivity : AppCompatActivity() {
 
             currentPhotoPath = absolutePath
         }
+        val rutaImagen = createImageFile().absolutePath
+        agregarImagenAGaleria(rutaImagen)
+    }
+    private fun agregarImagenAGaleria(rutaImagen: String) {
+        val archivoImagen = File(rutaImagen)
+        val uriImagen = Uri.fromFile(archivoImagen)
+
+        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        mediaScanIntent.data = uriImagen
+        applicationContext.sendBroadcast(mediaScanIntent)
     }
 
     override fun onRequestPermissionsResult(

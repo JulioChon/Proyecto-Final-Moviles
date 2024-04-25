@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import itson.traveldiary.R
 
 class PhotoAdapter(private val context: Context, private val imageUris: MutableList<Uri?>) :
     RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
@@ -22,7 +24,10 @@ class PhotoAdapter(private val context: Context, private val imageUris: MutableL
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.imageView.setImageURI(imageUris[position])
+
+        Glide.with(context)
+            .load(imageUris[position])
+            .into(holder.imageView)
     }
 
     override fun getItemCount() = imageUris.size

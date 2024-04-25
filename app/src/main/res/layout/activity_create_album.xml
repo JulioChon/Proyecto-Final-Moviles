@@ -92,7 +92,8 @@
         </LinearLayout>
 
         <!-- Contenedor de planificación -->
-        <ScrollView
+    <androidx.core.widget.NestedScrollView
+            android:id="@id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:background="#90EE90">
@@ -105,7 +106,7 @@
                 android:padding="8dp">
                 <!-- Contenedor para elementos de planificación -->
             </LinearLayout>
-        </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
         <!-- Sección de álbum de fotos y botones -->
         <LinearLayout
