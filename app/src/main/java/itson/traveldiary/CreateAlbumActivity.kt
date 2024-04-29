@@ -50,7 +50,8 @@ import kotlin.collections.MutableList
 
 
 @Suppress("UNREACHABLE_CODE")
-class CreateAlbumActivity : AppCompatActivity() {
+class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener {
+
 
     private lateinit var planificationContainer: LinearLayout
     private lateinit var nombreAlbum: EditText
@@ -110,7 +111,7 @@ class CreateAlbumActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView_album_fotos)
         recyclerView.layoutManager = GridLayoutManager(this, 3) // por ejemplo, para 3 columnas
-        photoAdapter = PhotoAdapter(this, mutableListOf())
+        photoAdapter = PhotoAdapter(this, mutableListOf(), this)
         recyclerView.adapter = photoAdapter
 
 
@@ -537,6 +538,24 @@ class CreateAlbumActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onItemClick(uri: Uri?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onItemLongClick(uri: Uri?, position: Int) {
+        uri?.let {
+            AlertDialog.Builder(this)
+                .setTitle("Eliminar imagen")
+                .setMessage("¿Deseas eliminar esta imagen?")
+                .setPositiveButton("Eliminar") { dialog, which ->
+                    photoAdapter.removeAt(position)
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+    }
+
     private fun agregarImagenAlRecyclerView(imageUri: Uri) {
         photoAdapter.addImage(imageUri)
         selectedImageUris.add(imageUri.toString())
