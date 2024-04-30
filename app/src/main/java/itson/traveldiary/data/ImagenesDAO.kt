@@ -15,4 +15,7 @@ interface ImagenesDAO {
 
     @Query("DELETE FROM Imagenes WHERE viajeId = :id")
     fun eliminarImagen(id: Int)
+
+    @Query("DELETE FROM Imagenes WHERE direccion = :direccion")
+    fun eliminarImagenPorDireccion(direccion: String)
 }

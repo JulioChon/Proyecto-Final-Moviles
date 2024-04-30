@@ -64,4 +64,6 @@ class PhotoAdapter(
         imageUris.removeAt(position)
         notifyItemRemoved(position)
     }
+
+    fun getImageUriAtPosition(position: Int): Uri? = imageUris.getOrNull(position)
 }

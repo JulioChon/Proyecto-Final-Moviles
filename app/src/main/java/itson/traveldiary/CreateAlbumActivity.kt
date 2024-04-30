@@ -549,7 +549,18 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
                 .setTitle("Eliminar imagen")
                 .setMessage("¿Deseas eliminar esta imagen?")
                 .setPositiveButton("Eliminar") { dialog, which ->
+                    // Obtenemos el URI de la imagen a eliminar
+                    val imageUriToDelete = photoAdapter.getImageUriAtPosition(position)
+                    // Eliminamos la imagen del RecyclerView
                     photoAdapter.removeAt(position)
+                    // Si el URI no es nulo, procedemos a eliminarlo de la base de datos también
+                    imageUriToDelete?.let { uriToDelete ->
+                        // Usamos una coroutine para realizar la operación de base de datos en un hilo separado
+                        CoroutineScope(Dispatchers.IO).launch {
+                            // Llamamos al método del DAO para eliminar la imagen por su dirección (URI)
+                            imagenesDAO.eliminarImagenPorDireccion(uriToDelete.toString())
+                        }
+                    }
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()
