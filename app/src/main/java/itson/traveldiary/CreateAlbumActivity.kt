@@ -311,10 +311,12 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         val titulo = nombreAlbum.text.toString().trim()
         val descripcion = descripcionAlbum.text.toString().trim()
         val ubicacion = campoUbicacion.text.toString().trim()
-
         val viaje = Viaje(id = id.toInt(), title = titulo, image = R.drawable.ic_launcher_foreground, ubicacion = ubicacion, detail = descripcion)
+
         CoroutineScope(Dispatchers.IO).launch {
             viajeDao.actualizarViaje(viaje)
+            imagenesDAO.eliminarImagen(id.toInt())  
+            guardarImagenes(id.toLong())
             guardarPlanificaciones(id.toLong()) {
                 runOnUiThread {
                     Toast.makeText(this@CreateAlbumActivity, "Viaje actualizado correctamente", Toast.LENGTH_SHORT).show()
@@ -428,7 +430,6 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
     private fun openCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            // Los permisos están otorgados, puedes abrir la cámara aquí
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
                 photoFile = try {
                     createImageFile()
@@ -528,9 +529,7 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
                     }
                 }
                 REQUEST_IMAGE_CAPTURE -> {
-                    // Confirmación de foto tomada
                     Toast.makeText(this, "Foto tomada.", Toast.LENGTH_SHORT).show()
-                    // Agregar al GridView
                     agregarImagenAlRecyclerView(photoUri)
                     Toast.makeText(this, "Foto agregada al álbum.", Toast.LENGTH_SHORT).show()
                     saveImageToGallery()
@@ -549,16 +548,12 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
                 .setTitle("Eliminar imagen")
                 .setMessage("¿Deseas eliminar esta imagen?")
                 .setPositiveButton("Eliminar") { dialog, which ->
-                    // Obtenemos el URI de la imagen a eliminar
                     val imageUriToDelete = photoAdapter.getImageUriAtPosition(position)
-                    // Eliminamos la imagen del RecyclerView
                     photoAdapter.removeAt(position)
-                    // Si el URI no es nulo, procedemos a eliminarlo de la base de datos también
-                    imageUriToDelete?.let { uriToDelete ->
-                        // Usamos una coroutine para realizar la operación de base de datos en un hilo separado
+                    if (imageUriToDelete != null) {
+                        selectedImageUris.remove(imageUriToDelete.toString())
                         CoroutineScope(Dispatchers.IO).launch {
-                            // Llamamos al método del DAO para eliminar la imagen por su dirección (URI)
-                            imagenesDAO.eliminarImagenPorDireccion(uriToDelete.toString())
+                            imagenesDAO.eliminarImagenPorDireccion(imageUriToDelete.toString())
                         }
                     }
                 }
