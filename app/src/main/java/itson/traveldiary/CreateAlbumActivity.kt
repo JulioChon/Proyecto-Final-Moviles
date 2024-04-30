@@ -267,6 +267,7 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         val titulo = nombreAlbum.text.toString()
         val descripcion = descripcionAlbum.text.toString()
         val ubicacion = campoUbicacion.text.toString()
+        val portadaUri = if (selectedImageUris.isNotEmpty()) selectedImageUris[0] else ""
 
         if (titulo.isBlank() || descripcion.isBlank()) {
 
@@ -280,7 +281,7 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
             finish()
         } else {
 
-            val viaje = Viaje(titulo, R.drawable.ic_launcher_foreground, ubicacion, descripcion)
+            val viaje = Viaje(titulo, image=portadaUri, ubicacion, descripcion)
             CoroutineScope(Dispatchers.IO).launch {
                 val viajeId = viajeDao.insert(viaje)
                 if (viajeId != -1L) {
@@ -311,7 +312,8 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         val titulo = nombreAlbum.text.toString().trim()
         val descripcion = descripcionAlbum.text.toString().trim()
         val ubicacion = campoUbicacion.text.toString().trim()
-        val viaje = Viaje(id = id.toInt(), title = titulo, image = R.drawable.ic_launcher_foreground, ubicacion = ubicacion, detail = descripcion)
+        val portadaUri = if (selectedImageUris.isNotEmpty()) selectedImageUris[0] else ""
+        val viaje = Viaje(id = id.toInt(), title = titulo, image = portadaUri, ubicacion = ubicacion, detail = descripcion)
 
         CoroutineScope(Dispatchers.IO).launch {
             viajeDao.actualizarViaje(viaje)

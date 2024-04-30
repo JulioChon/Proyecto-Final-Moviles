@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import itson.traveldiary.data.Viaje
+import com.bumptech.glide.Glide
 
 class CustomadapterCardViajes(
     private val viajes: List<Viaje>,
@@ -38,7 +39,10 @@ class CustomadapterCardViajes(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val viaje = viajes[position]
 
-        holder.itemImage.setImageResource(viaje.image)
+        Glide.with(holder.itemView.context)
+            .load(viaje.image)
+            .into(holder.itemImage)
+
         holder.itemTitle.text = viaje.title
         holder.itemDetail.text = viaje.detail
     }

@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Viaje(
     val title: String,
-    val image: Int,
+    val image: String,
     val ubicacion: String,
     val detail: String,
 
