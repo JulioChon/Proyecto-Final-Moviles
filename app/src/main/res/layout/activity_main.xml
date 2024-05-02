@@ -35,42 +35,25 @@
        android:src="@drawable/perfil"
        tools:ignore="MissingConstraints" />
 
-   <View
-       android:id="@+id/primerLinea"
-       android:layout_width="match_parent"
-       android:layout_height="5dp"
-       android:layout_marginTop="20dp"
-       android:layout_below="@id/imagen_perfil"
-       android:background="#E2DEDE" />
 
-   <Button
-       android:id="@+id/boton_albums"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_below="@id/primerLinea"
-       android:layout_marginLeft="20dp"
-       android:layout_marginTop="19dp"
-       android:backgroundTint="#3BB06A"
-       android:text="Tus Albums"
-       app:cornerRadius="20dp" />
 
-   <Button
+
+
+   <ImageButton
        android:id="@+id/boton_random"
-       android:layout_width="80dp"
-       android:layout_height="86dp"
-       android:layout_below="@id/primerLinea"
-       android:layout_marginLeft="159dp"
-       android:layout_marginTop="11dp"
-       android:layout_toRightOf="@id/boton_albums"
+       android:layout_width="40dp"
+       android:layout_height="40dp"
+       android:layout_below="@id/titulo_pagina"
+       android:layout_toRightOf="@id/imagen_perfil"
+
        android:backgroundTint="#0000"
-       android:drawableBottom="@mipmap/ic_launcher" />
+       android:src="@mipmap/ic_icono_random"/>
 
    <View
        android:id="@+id/segundaLinea"
        android:layout_width="match_parent"
        android:layout_height="5dp"
-       android:layout_marginTop="20dp"
-       android:layout_below="@id/boton_albums"
+       android:layout_below="@id/boton_random"
        android:background="#E2DEDE" />
 
    <androidx.recyclerview.widget.RecyclerView
@@ -78,7 +61,7 @@
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        android:layout_below="@id/segundaLinea"
-       android:layout_marginTop="20dp"
+       android:layout_marginTop="10dp"
        android:layout_alignParentStart="true"
        android:layout_alignParentEnd="true"
    />

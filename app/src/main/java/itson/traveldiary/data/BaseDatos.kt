@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Viaje::class, Planificacion::class, Imagenes::class], version = 4)
+@Database(entities = [Viaje::class, Planificacion::class, Imagenes::class], version = 5)
 abstract class BaseDatos : RoomDatabase() {
     abstract val viajeDao: ViajeDao
     abstract val planificacionDao: PlanificacionDao

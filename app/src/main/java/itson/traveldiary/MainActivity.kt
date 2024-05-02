@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import android.Manifest
 import android.content.Context
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viajeDao: ViajeDao
     private val REQUEST_CODE_LOCATION_PERMISSION = 123
-    private lateinit var randomBotom: Button
+    private lateinit var randomBotom: ImageButton
     private lateinit var imagen_perfil: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         viajeDao = database.viajeDao
 
         imagen_perfil = findViewById<ImageView>(R.id.imagen_perfil)
-        randomBotom = findViewById<Button>(R.id.boton_random)
+        randomBotom = findViewById<ImageButton>(R.id.boton_random)
         val addButton = findViewById<Button>(R.id.boton_inferior)
         cargarImagenPerfilDesdeSharedPreferences(this)
         addButton.setOnClickListener {
