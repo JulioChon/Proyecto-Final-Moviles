@@ -38,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="ubicacion actual"
+                android:text="ubicación actual"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -46,26 +46,26 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="titulo album"
+            android:text="Título albúm"
             android:textSize="18sp" />
 
         <EditText
             android:id="@+id/nombre_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="introduce el titulo" />
+            android:hint="introduce el título" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="descripcion album"
+            android:text="Descripción albúm"
             android:textSize="18sp" />
 
         <EditText
             android:id="@+id/descripcion_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint=" introduce la descripcion" />
+            android:hint=" introduce la descripción" />
 
         <!-- Botón de agregación de planificación -->
         <LinearLayout
@@ -78,8 +78,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="planificacion"
+                android:text="Planificación"
                 android:textSize="24sp" />
+
+            <ImageButton
+                android:id="@+id/boton_info_planificacion"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:layout_weight="0.1"
+                android:src="@drawable/ic_info"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="Información"
+                android:scaleType="fitCenter" />
+
 
             <Button
                 android:id="@+id/boton_agregar_planificacion"
@@ -106,6 +117,8 @@
                 android:padding="8dp">
                 <!-- Contenedor para elementos de planificación -->
             </LinearLayout>
+
+
     </androidx.core.widget.NestedScrollView>
 
         <!-- Sección de álbum de fotos y botones -->
@@ -121,7 +134,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="album fotos"
+                android:text="Albúm fotos"
                 android:textSize="24sp" />
 
             <ImageButton

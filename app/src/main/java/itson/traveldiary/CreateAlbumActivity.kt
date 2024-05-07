@@ -125,6 +125,16 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
             guardarViaje()
         }
 
+        val botonInfoPlanificacion = findViewById<ImageButton>(R.id.boton_info_planificacion)
+        botonInfoPlanificacion.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Cómo eliminar una planificación")
+                .setMessage("Mantén presionada la entrada de planificación que deseas eliminar.")
+                .setPositiveButton("Entendido", null)
+                .show()
+        }
+
+
         val botonVolver = findViewById<ImageButton>(R.id.boton_volver)
         botonVolver.setOnClickListener {
             finish()
@@ -377,10 +387,15 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
 
     private fun addEditText(planificacion: Planificacion? = null) {
         val editText = EditText(this).apply {
+            // Configurar los LayoutParams con márgenes directamente aquí
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            ).also { layoutParams ->
+                // Aquí puedes especificar el margen en píxeles directamente, por e jemplo, 8dp convertido a píxeles
+                val marginInPixels = (8 * resources.displayMetrics.density).toInt() // Convierte 8dp a píxeles según la densidad de pantalla
+                (layoutParams as LinearLayout.LayoutParams).setMargins(marginInPixels, marginInPixels, marginInPixels, marginInPixels)
+            }
             hint = "Descripción de la actividad"
             setText(planificacion?.evento)
             background = ContextCompat.getDrawable(context, R.drawable.edittext_background)
@@ -393,6 +408,7 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         }
         planificationContainer.addView(editText)
     }
+
 
     private fun confirmDeletion(editText: EditText) {
         AlertDialog.Builder(this)
