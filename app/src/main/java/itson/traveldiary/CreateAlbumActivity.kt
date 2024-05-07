@@ -72,6 +72,8 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
     private lateinit var recyclerView: RecyclerView
     private val selectedImageUris: MutableList<String> = mutableListOf()
     private lateinit var imagenesDAO: ImagenesDAO
+    private  var listaIdPlanificacionesEliminar: MutableList<Int> = mutableListOf()
+    private var listaImagenesEliminar: MutableList<String> = mutableListOf()
 
 
 
@@ -315,6 +317,15 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         val portadaUri = if (selectedImageUris.isNotEmpty()) selectedImageUris[0] else ""
         val viaje = Viaje(id = id.toInt(), title = titulo, image = portadaUri, ubicacion = ubicacion, detail = descripcion)
 
+
+        for(imagen in listaImagenesEliminar){
+            this.eliminarImagenes(imagen)
+        }
+
+        for (planificacion in listaIdPlanificacionesEliminar){
+            this.eliminarPlanificaciones(planificacion)
+        }
+
         CoroutineScope(Dispatchers.IO).launch {
             viajeDao.actualizarViaje(viaje)
             imagenesDAO.eliminarImagen(id.toInt())  
@@ -391,11 +402,8 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
                 if(editText.getId()==0){
                     planificationContainer.removeView(editText)
                 }else{
-                    CoroutineScope(Dispatchers.IO).launch {
+                    listaIdPlanificacionesEliminar.add(editText.getId())
 
-                        planificacionDao.eliminarPlanificacion(editText.getId())
-
-                    }
                     planificationContainer.removeView(editText)
                 }
 
@@ -405,6 +413,11 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
     }
 
 
+    private fun eliminarPlanificaciones(id:Int){
+        CoroutineScope(Dispatchers.IO).launch {
+            planificacionDao.eliminarPlanificacion(id)
+        }
+    }
     private fun checkGalleryPermissionAndOpen() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -541,7 +554,7 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
     }
 
     override fun onItemClick(uri: Uri?) {
-        TODO("Not yet implemented")
+       
     }
 
     override fun onItemLongClick(uri: Uri?, position: Int) {
@@ -554,9 +567,8 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
                     photoAdapter.removeAt(position)
                     if (imageUriToDelete != null) {
                         selectedImageUris.remove(imageUriToDelete.toString())
-                        CoroutineScope(Dispatchers.IO).launch {
-                            imagenesDAO.eliminarImagenPorDireccion(imageUriToDelete.toString())
-                        }
+                        listaImagenesEliminar.add(imageUriToDelete.toString())
+
                     }
                 }
                 .setNegativeButton("Cancelar", null)
@@ -564,6 +576,11 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         }
     }
 
+    private fun eliminarImagenes(direccion:String){
+        CoroutineScope(Dispatchers.IO).launch {
+            imagenesDAO.eliminarImagenPorDireccion(direccion)
+        }
+    }
     private fun agregarImagenAlRecyclerView(imageUri: Uri) {
         photoAdapter.addImage(imageUri)
         selectedImageUris.add(imageUri.toString())

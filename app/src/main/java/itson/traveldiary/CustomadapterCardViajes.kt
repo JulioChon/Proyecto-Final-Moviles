@@ -1,5 +1,6 @@
 package itson.traveldiary
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,9 +40,16 @@ class CustomadapterCardViajes(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val viaje = viajes[position]
 
-        Glide.with(holder.itemView.context)
-            .load(viaje.image)
-            .into(holder.itemImage)
+
+        if (viaje.image.isNotEmpty()) {
+            Glide.with(holder.itemView.context)
+                .load(viaje.image)
+                .into(holder.itemImage)
+        } else {
+            holder.itemImage.setImageResource(R.drawable.ic_launcher_foreground)
+
+        }
+
 
         holder.itemTitle.text = viaje.title
         holder.itemDetail.text = viaje.detail

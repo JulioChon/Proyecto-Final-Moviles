@@ -176,14 +176,14 @@
                 android:id="@+id/boton_guardar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="guardar"
+                android:text="Guardar"
                 android:layout_marginTop="16dp" />
 
             <Button
                 android:id="@+id/boton_eliminar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="eliminar"
+                android:text="Eliminar"
                 android:layout_marginTop="16dp" />
         </LinearLayout>
     </LinearLayout>
