@@ -75,15 +75,11 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
     private  var listaIdPlanificacionesEliminar: MutableList<Int> = mutableListOf()
     private var listaImagenesEliminar: MutableList<String> = mutableListOf()
 
-
-
-
     companion object {
         const val PERMISSION_REQUEST_CODE = 1001
         const val REQUEST_CODE_GALLERY = 1002
         const val REQUEST_CODE_CAMERA = 1003
         const val REQUEST_IMAGE_CAPTURE = 1004
-        var currentPhotoPath: String = ""
         const val FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider"
         const val PERMISSION_REQUEST_CODE_CAMERA = 1005
     }
@@ -117,9 +113,6 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         recyclerView.adapter = photoAdapter
 
 
-
-
-
         botonGuardar = findViewById<Button>(R.id.boton_guardar)
         botonGuardar.setOnClickListener {
             guardarViaje()
@@ -128,8 +121,8 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
         val botonInfoPlanificacion = findViewById<ImageButton>(R.id.boton_info_planificacion)
         botonInfoPlanificacion.setOnClickListener {
             AlertDialog.Builder(this)
-                .setTitle("Cómo eliminar una planificación")
-                .setMessage("Mantén presionada la entrada de planificación que deseas eliminar.")
+                .setTitle("Información General")
+                .setMessage("Para eliminar una imagen o actividad de la planficación mantén presionado lo que deseas eliminar.")
                 .setPositiveButton("Entendido", null)
                 .show()
         }
@@ -318,8 +311,6 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
     }
 
 
-
-
     private fun actualizar() {
         val titulo = nombreAlbum.text.toString().trim()
         val descripcion = descripcionAlbum.text.toString().trim()
@@ -350,7 +341,6 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
     }
 
 
-
     private suspend fun guardarPlanificaciones(viajeId: Long, completion: () -> Unit) {
         var planificacionGuardada = false
         for (i in 0 until planificationContainer.childCount) {
@@ -376,14 +366,10 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
             }
         } else {
             withContext(Dispatchers.Main) {
-                Toast.makeText(this@CreateAlbumActivity, "No hay planificaciones para guardar.", Toast.LENGTH_SHORT).show()
                 completion()
             }
         }
     }
-
-
-
 
     private fun addEditText(planificacion: Planificacion? = null) {
         val editText = EditText(this).apply {
@@ -556,13 +542,11 @@ class CreateAlbumActivity : AppCompatActivity(), PhotoAdapter.ItemClickListener 
                 REQUEST_CODE_GALLERY -> {
                     data?.data?.let {
                         agregarImagenAlRecyclerView(it)
-                        Toast.makeText(this, "Imagen agregada desde la galería.", Toast.LENGTH_SHORT).show()
                     }
                 }
                 REQUEST_IMAGE_CAPTURE -> {
                     Toast.makeText(this, "Foto tomada.", Toast.LENGTH_SHORT).show()
                     agregarImagenAlRecyclerView(photoUri)
-                    Toast.makeText(this, "Foto agregada al álbum.", Toast.LENGTH_SHORT).show()
                     saveImageToGallery()
                 }
             }

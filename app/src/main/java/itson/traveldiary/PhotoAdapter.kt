@@ -13,7 +13,7 @@ import itson.traveldiary.R
 class PhotoAdapter(
     private val context: Context,
     private val imageUris: MutableList<Uri?>,
-    private val itemClickListener: ItemClickListener // Agregar listener para los clics
+    private val itemClickListener: ItemClickListener
 ) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
 
     interface ItemClickListener {
@@ -28,7 +28,6 @@ class PhotoAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_photo, parent, false)
         return ViewHolder(view).apply {
-            // Añadir manejo de clic largo para eliminar
             itemView.setOnLongClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
@@ -59,7 +58,6 @@ class PhotoAdapter(
         notifyItemInserted(imageUris.size - 1)
     }
 
-    // Método para eliminar imagen
     fun removeAt(position: Int) {
         imageUris.removeAt(position)
         notifyItemRemoved(position)
